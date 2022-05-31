@@ -51,6 +51,7 @@ function printListNotes(data) {
         })
 
         printNotes(notesFiltered, year);
+        activateFirstNote();
     });
 
 }
@@ -80,4 +81,25 @@ function printNotes(data, year) {
 
     });
     
+}
+
+//[4] get one note and activate
+
+function activateFirstNote() {
+    const firtsNote = $('.notes-menu__year:first-child .notes-menu__list__item:first-child');
+    firtsNote.addClass('active');
+    getNote(firtsNote.data('id'));
+}
+
+function getNote(id) {
+    $.ajax({
+        method: 'GET',
+        url: 'https://62961666810c00c1cb6ed9b8.mockapi.io/notes/' + id,
+        success: function(data) {
+            console.log(data);
+        },
+        error: function (err){
+            console.log(err);
+        }
+    });
 }
