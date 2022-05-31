@@ -56,6 +56,6 @@ function printListNotes(data) {
 }
 
 //[3] handlebars con content
-function printListNotes(data, year) {
+function printNotes(data, year) {
     console.log(data, year);
 }
