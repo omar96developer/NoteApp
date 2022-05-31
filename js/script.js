@@ -1,3 +1,7 @@
+const ckEditor = {
+    editorInstance: {}
+};
+
 $(document).ready(function () {
 
     //global daysjs locale it and utc plugin
@@ -96,7 +100,28 @@ function getNote(id) {
         method: 'GET',
         url: 'https://62961666810c00c1cb6ed9b8.mockapi.io/notes/' + id,
         success: function(data) {
-            console.log(data);
+            const updateAt = dayjs(data.updateAt).format('DD MMMM YYYY');
+            const dateContainer = $('.note-editor__header-bottom .date');
+            dateContainer.html(updateAt);
+
+            const titleContainer = $('.note-editor__title');
+            titleContainer.val(data.title);
+
+            const editor = $('#editor');
+            editor.data('id', data.id);
+            editor.html(data.text);
+
+            ClassicEditor
+            .create( editor[0] )
+            .catch( error => {
+                console.error( error );
+            })
+            .then(function (editor) {
+                //save editor instance in object, when change note we use it to destroy editor
+                ckEditor.editorInstance = editor;
+                console.log(editor);
+            });
+
         },
         error: function (err){
             console.log(err);
