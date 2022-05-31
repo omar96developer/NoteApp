@@ -38,7 +38,7 @@ function printListNotes(data) {
             years.push(year);
         }
     });
-    console.log(years);
+    //console.log(years);
 
     //print for years 
     years.forEach((year) =>{
@@ -57,5 +57,27 @@ function printListNotes(data) {
 
 //[3] handlebars con content
 function printNotes(data, year) {
-    console.log(data, year);
+    const listNotesContainer = $('.year' + year + '  .notes-menu__list');
+
+    const source = $('#note-list-template').html();
+    const template = Handlebars.compile(source);
+
+    data.forEach((note) => {
+        // const fakeElemet = $('<div></div>').append(note.text);
+        const text = note.text.slice(0, 30) + '...';
+        //console.log(text);
+        
+        const context = {
+            id: note.id,
+            title: note.title,
+            text: text,
+            updatedAt: dayjs(note.updatedAt).format('DD MMMM YYYY')
+        };
+        
+        const html = template(context);
+        //console.log(html);
+        listNotesContainer.append(html);
+
+    });
+    
 }
