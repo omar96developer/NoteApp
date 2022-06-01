@@ -184,6 +184,7 @@ function saveNote(note) {
       data: note,
       url: 'https://62961666810c00c1cb6ed9b8.mockapi.io/notes/' + note.id,
       success: function (data) {
+        updateDate(data.updateAt);
         updateNoteInMenu(data);
       },
       error: function (err) {
@@ -199,7 +200,7 @@ function updateNoteInMenu(data) {
     $('.notes-menu__list__item.active .title').html(data.title);
     $('.notes-menu__list__item.active .text').text(text);
     $('.notes-menu__list__item.active .date').text(dayjs(data.updatedAt).format('DD MMMM YYYY'));
-    $('.note-editor__header-bottom .date').text(dayjs(data.updatedAt).format('DD MMMM YYYY hh:mm:ss'));
+    
   }
 
 
@@ -220,4 +221,9 @@ function updateNote() {
       saveNote(note);
     }, 1000);
     
+  }
+  //[7] update date
+  function updateDate(date) {
+    $('.note-editor__header-bottom .date')
+    .text(dayjs(date).format('DD MMMM YYYY hh:mm:ss'));
   }
