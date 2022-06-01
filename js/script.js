@@ -2,6 +2,8 @@ const ckEditor = {
     editorInstance: {}
 };
 
+let timeout = null;
+
 $(document).ready(function () {
 
     //global daysjs locale it and utc plugin
@@ -9,9 +11,36 @@ $(document).ready(function () {
     dayjs.extend(window.dayjs_plugin_utc);
 
     getAllNotes();
+
+    // [6] change active note when click on a note
+
+    $(document).on('click', '.notes-menu__list__item', function () {
+
+        if(ckEditor.editorInstance.id){
+            ckEditor.editorInstance.destroy();
+            ckEditor.editorInstance = {};
+        }
+
+        $(this).addClass('active').siblings().removeClass('active');
+
+        getNote($(this).data('id'));
+    });
+
+    //[6] update note text
+
+    $(document).on('keyup', '.note-editor .ck-editor__main .ck-content', function () {
+        updateNote();
+    });
+
+    //[6] update note title
+
+    $(document).on('keyup', '.note-editor__title', function () {
+        updateNote();
+
+    });
 });
 
-// [1] api Ajax
+// [1] API Ajax for printing the notes on left
 function getAllNotes() {
     $.ajax({
         method: 'GET',
@@ -95,6 +124,8 @@ function activateFirstNote() {
     getNote(firtsNote.data('id'));
 }
 
+//[5] API Ajax for printing the data of the notes
+
 function getNote(id) {
     $.ajax({
         method: 'GET',
@@ -128,3 +159,65 @@ function getNote(id) {
         }
     });
 }
+
+//[6] save update note
+function saveNote(note) {
+    note.updatedAt = dayjs.utc().format();
+    $.ajax({
+        method: 'PUT',
+        data: note,
+        url: 'https://62961666810c00c1cb6ed9b8.mockapi.io/notes/' + note.id,
+        success: function(data) {
+            updateNoteInMenu(data);
+
+        },
+        error: function (err){
+            console.log(err);
+        }
+    });
+}
+function saveNote(note) {
+    note.updatedAt = dayjs.utc().format();
+  
+    $.ajax({
+      method: 'PUT',
+      data: note,
+      url: 'https://62961666810c00c1cb6ed9b8.mockapi.io/notes/' + note.id,
+      success: function (data) {
+        updateNoteInMenu(data);
+      },
+      error: function (err) {
+        console.log(err);
+      }
+    });
+  }
+
+function updateNoteInMenu(data) {
+    const fakeElement = $('<div></div>').append(data.text);
+    const text = fakeElement.text().slice(0, 30) + '...';
+  
+    $('.notes-menu__list__item.active .title').html(data.title);
+    $('.notes-menu__list__item.active .text').text(text);
+    $('.notes-menu__list__item.active .date').text(dayjs(data.updatedAt).format('DD MMMM YYYY'));
+    $('.note-editor__header-bottom .date').text(dayjs(data.updatedAt).format('DD MMMM YYYY hh:mm:ss'));
+  }
+
+
+
+//[6] deboucing updatenote
+
+function updateNote() {
+    const note = {
+      id: $('#editor').data('id'),
+      text: $('.note-editor .ck-editor__main .ck-content').html(),
+      title: $('.note-editor__title').val()
+    };
+  
+    clearTimeout(timeout);
+  
+    timeout = setTimeout(function () {
+      
+      saveNote(note);
+    }, 1000);
+    
+  }
