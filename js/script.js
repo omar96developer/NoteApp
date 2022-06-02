@@ -38,6 +38,26 @@ $(document).ready(function () {
         updateNote();
 
     });
+
+    //[8] dropdowns
+
+    $(document).on('click','#filter', function(event){
+        event.preventDefault();
+        dropdown($(this));
+    });
+
+    $(document).on('click','#sort', function(event){
+        event.preventDefault();
+        dropdown($(this));
+
+    });
+
+    $(document).on('click','#layout', function(event){
+        event.preventDefault();
+        dropdown($(this));
+
+    });
+
 });
 
 // [1] API Ajax for printing the notes on left
@@ -222,8 +242,33 @@ function updateNote() {
     }, 1000);
     
   }
-  //[7] update date
-  function updateDate(date) {
-    $('.note-editor__header-bottom .date')
-    .text(dayjs(date).format('DD MMMM YYYY hh:mm:ss'));
-  }
+
+
+//[7] update date
+
+function updateDate(date) {
+$('.note-editor__header-bottom .date')
+.text(dayjs(date).format('DD MMMM YYYY hh:mm:ss'));
+}
+
+//[8] dropdowns
+
+function dropdown(element) {
+    const offset = element.offset();
+    console.log(offset);
+
+    const height = element.height();
+    console.log(height);
+
+
+    const id = element.attr('id');
+    const dropdown = $('.dropdown[data-id="'+ id +'"]');
+
+    dropdown.siblings().removeClass('active');
+
+    dropdown.toggleClass('active').css({
+        top: offset.top + height,
+        left: offset.left
+    });
+
+}
